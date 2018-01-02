@@ -1,8 +1,7 @@
 === Disable Downloadable Repeat Purchase - WooCommerce ===
-Contributors: squareonemedia, rwebster85
+Contributors: squareonemedia, rwebster85, ryanhalliday
 Author URI: https://www.squareonemedia.co.uk
 Plugin URL: https://wordpress.org/plugins/disable-downloadable-repeat-purchase-woocommerce/
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VAYF6G99MCMHU
 Requires at Least: 3.7
 Tested Up To: 4.5.2
 Tags: woocommerce, downloads, downloadable, repeat purchase, wordpress, wordpress.org
@@ -42,5 +41,8 @@ It uses div tags, including <div class="woocommerce-info wc-nonpurchasable-messa
 
 
 == Changelog ==
+= 1.1 =
+* Improved performance by saving query results
 = 1.0 = 
 * Initial release
+
