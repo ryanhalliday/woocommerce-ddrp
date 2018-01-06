@@ -22,7 +22,6 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 	if ( wc_customer_bought_product( get_current_user()->user_email, get_current_user_id(), $product_id ) && ($product->downloadable == 'yes') ) {
 
 		if ($customers_downloadable_products === 0){
-			echo 'Refetch';
 			$customers_downloadable_products = WC()->customer->get_downloadable_products();
 		}
 
@@ -51,7 +50,6 @@ function som_repeat_purchase_disabled_message() {
 	if ( wc_customer_bought_product( get_current_user()->user_email, get_current_user_id(), $product->id ) && ($product->downloadable == 'yes') ) {
 
 		if ($customers_downloadable_products === 0){
-			echo 'Refetch';
 			$customers_downloadable_products = WC()->customer->get_downloadable_products();
 		}
 
