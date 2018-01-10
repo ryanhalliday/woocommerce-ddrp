@@ -19,7 +19,7 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 	$product_id = $product->id; 
  
 	// return false if the customer has bought the product and is currently available for download
-	if ( wc_customer_bought_product( get_current_user()->user_email, get_current_user_id(), $product_id ) && ($product->downloadable == 'yes') ) {
+	if ( wc_customer_bought_product( wp_get_current_user()->user_email, get_current_user_id(), $product_id ) && ($product->downloadable == 'yes') ) {
 
 		if ($customers_downloadable_products === 0){
 			$customers_downloadable_products = WC()->customer->get_downloadable_products();
