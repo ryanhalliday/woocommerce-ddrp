@@ -15,6 +15,11 @@ $customers_downloadable_products = 0;
 function som_disable_repeat_purchase( $purchasable, $product ) {
 	global $customers_downloadable_products;
 
+	if ($product->get_type() == "yith_bundle" || is_a($product, 'YITH_WC_Bundled_Item')){
+		//Handle bundle logic another day
+		return true;
+	}
+
 	// Get the ID for the current product
 	$product_id = $product->id; 
  
@@ -22,7 +27,10 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 	if ( wc_customer_bought_product( wp_get_current_user()->user_email, get_current_user_id(), $product_id ) && ($product->downloadable == 'yes') ) {
 
 		if ($customers_downloadable_products === 0){
-			$customers_downloadable_products = WC()->customer->get_downloadable_products();
+			$customer = WC()->customer;
+			if (!is_null($customer)){
+				$customers_downloadable_products = WC()->customer->get_downloadable_products();
+			}
 		}
 
 		if ( $downloads = $customers_downloadable_products ) {
@@ -50,7 +58,10 @@ function som_repeat_purchase_disabled_message() {
 	if ( wc_customer_bought_product( get_current_user()->user_email, get_current_user_id(), $product->id ) && ($product->downloadable == 'yes') ) {
 
 		if ($customers_downloadable_products === 0){
-			$customers_downloadable_products = WC()->customer->get_downloadable_products();
+			$customer = WC()->customer;
+			if (!is_null($customer)){
+				$customers_downloadable_products = WC()->customer->get_downloadable_products();
+			}
 		}
 
 		if ( $downloads = $customers_downloadable_products ) {
