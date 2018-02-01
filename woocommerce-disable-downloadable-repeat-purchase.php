@@ -48,10 +48,11 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 }
 add_filter( 'woocommerce_is_purchasable', 'som_disable_repeat_purchase', 10, 2 );
 
-function som_repeat_purchase_disabled_message() {
-
+$displayDownloads = false;
+function som_repeat_purchase_buttons() {
 	global $product;
 	global $customers_downloadable_products;
+	global $displayDownloads;
 	$once = 0;
 	$end = false;
 
@@ -65,6 +66,7 @@ function som_repeat_purchase_disabled_message() {
 		}
 
 		if ( $downloads = $customers_downloadable_products ) {
+			$displayDownloads = true;
 
 			do_action( 'woocommerce_before_available_downloads' ); ?>
 
@@ -72,27 +74,52 @@ function som_repeat_purchase_disabled_message() {
 
 					if ($download['product_id'] == $product->id) {
 
-						$once++;
+						// $once++;
 
-						if ($end == false)
-							$end = true;
+						// if ($end == false)
+						// 	$end = true;
 
-						if ($once == 1) {
-							echo '<div class="woocommerce"><div class="woocommerce-info wc-nonpurchasable-message"><p><strong>You\'ve already purchased this product.</strong><br>Download links below.</p>';
-							echo '<div class="product-page-links">';
-
-							//The below codes injects some CSS for smaller than desktop devices. Depending on how many download links there are, the list can get quite long, which may affect the site styling depending on the theme. Specifically a default custom theme. Remove the below echo line if this is not required.
-							echo '<style>@media (max-width : 1200px){ .summary.entry-summary {width: 100%!important; display: block;} }</style>';
-
-						}
+						// if ($once == 1) {
+						// 	? >
+						// 	<div class="woocommerce">
+						// 		<div class="woocommerce-info wc-nonpurchasable-message">
+						// 			<p>
+						// 				<strong>You\'ve already purchased this product.</strong><br>
+						// 				Download links below.
+						// 			</p>
+						// 			<div class="product-page-links">
+						// 				<style>@media (max-width : 1200px){ .summary.entry-summary {width: 100%!important; display: block;} }</style>
+						// 	< ?
+						// }
 
 						do_action( 'woocommerce_available_download_start', $download );
 
 						if ( is_numeric( $download['downloads_remaining'] ) ) {
-							echo apply_filters( 'woocommerce_available_download_count', '<span class="count">' . sprintf( _n( '%s download remaining', '%s downloads remaining', $download['downloads_remaining'], 'woocommerce' ), $download['downloads_remaining'] ) . '</span> ', $download );
+							echo apply_filters(
+								'woocommerce_available_download_count',
+								'<span class="count">' . 
+									sprintf( _n( 
+										'%s download remaining',
+										'%s downloads remaining',
+										$download['downloads_remaining'],
+										'woocommerce'
+									), 
+									$download['downloads_remaining'] 
+								) . 
+								'</span> ',
+								$download
+							);
 						}
 
-						echo apply_filters( 'woocommerce_available_download_link', '<a class="download-link-product-page" href="' . esc_url( $download['download_url'] ) . '">' . $download['download_name'] . '</a>', $download ) ;
+						echo apply_filters(
+							'woocommerce_available_download_link', 
+							'<a class="add_to_cart_button download_button download-link-product-page" href="' . 
+							esc_url( $download['download_url'] ) . 
+							'">Download: ' . 
+								$download['download_name'] . 
+							'</a>', 
+							$download 
+						) ;
 
 						do_action( 'woocommerce_available_download_end', $download );
 
@@ -100,9 +127,13 @@ function som_repeat_purchase_disabled_message() {
 
 				endforeach;
 
-					if ($end) {
-						echo '</div></div></div>';
-					}
+					// if ($end) {
+					// 	? >
+					// 				</div>
+					// 			</div>
+					// 		</div>
+					// 	< ?
+					// }
 
 			do_action( 'woocommerce_after_available_downloads' );
 
@@ -111,4 +142,22 @@ function som_repeat_purchase_disabled_message() {
 		}
 
 }
+
+function som_repeat_purchase_disabled_message(){
+	global $displayDownloads;
+	if ($displayDownloads){
+		?>
+		<div class="woocommerce">
+			<div class="woocommerce-info wc-nonpurchasable-message">
+				<p>
+					<strong>You've already purchased this product.</strong><br>
+					Your download links are above.
+				</p>
+			</div>
+		</div>
+		<?
+	}
+}
+
+add_action( 'woocommerce_single_product_summary', 'som_repeat_purchase_buttons', 15 );
 add_action( 'woocommerce_single_product_summary', 'som_repeat_purchase_disabled_message', 31 );
