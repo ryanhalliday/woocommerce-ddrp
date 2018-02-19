@@ -17,7 +17,19 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 
 	if ($product->get_type() == "yith_bundle" || is_a($product, 'YITH_WC_Bundled_Item')){
 		//Handle bundle logic another day
-		return true;
+		$bundled_items = $product->get_bundled_items();
+		$purchasable_count = 0;
+		foreach ( $bundled_items as $bundled_item ) {
+			if ( $bundled_item->get_product()->is_purchasable() ) {
+				$purchasable_count++;
+			}
+		}
+
+		if ($purchasable_count == 0 && $product->get_price() !== '' ){
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	// Get the ID for the current product
