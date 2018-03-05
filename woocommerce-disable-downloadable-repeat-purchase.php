@@ -80,78 +80,59 @@ function som_repeat_purchase_buttons() {
 		if ( $downloads = $customers_downloadable_products ) {
 			$displayDownloads = true;
 
-			do_action( 'woocommerce_before_available_downloads' ); ?>
+			do_action( 'woocommerce_before_available_downloads' ); 
 
-				<?php foreach ( $downloads as $download ) :
+			$alreadyDisplayed = [];
 
-					if ($download['product_id'] == $product->id) {
+			foreach ( $downloads as $download ) {
 
-						// $once++;
+				if ($download['product_id'] == $product->id) {
 
-						// if ($end == false)
-						// 	$end = true;
-
-						// if ($once == 1) {
-						// 	? >
-						// 	<div class="woocommerce">
-						// 		<div class="woocommerce-info wc-nonpurchasable-message">
-						// 			<p>
-						// 				<strong>You\'ve already purchased this product.</strong><br>
-						// 				Download links below.
-						// 			</p>
-						// 			<div class="product-page-links">
-						// 				<style>@media (max-width : 1200px){ .summary.entry-summary {width: 100%!important; display: block;} }</style>
-						// 	< ?
-						// }
-
-						do_action( 'woocommerce_available_download_start', $download );
-
-						if ( is_numeric( $download['downloads_remaining'] ) ) {
-							echo apply_filters(
-								'woocommerce_available_download_count',
-								'<span class="count">' . 
-									sprintf( _n( 
-										'%s download remaining',
-										'%s downloads remaining',
-										$download['downloads_remaining'],
-										'woocommerce'
-									), 
-									$download['downloads_remaining'] 
-								) . 
-								'</span> ',
-								$download
-							);
-						}
-
-						echo apply_filters(
-							'woocommerce_available_download_link', 
-							'<a class="add_to_cart_button download_button download-link-product-page" href="' . 
-							esc_url( $download['download_url'] ) . 
-							'">Download: ' . 
-								$download['download_name'] . 
-							'</a>', 
-							$download 
-						) ;
-
-						do_action( 'woocommerce_available_download_end', $download );
-
+					if (in_array($download['download_name'], $alreadyDisplayed)){
+						continue;
+					} else {
+						$alreadyDisplayed[] = $download['download_name'];
 					}
 
-				endforeach;
+					do_action( 'woocommerce_available_download_start', $download );
 
-					// if ($end) {
-					// 	? >
-					// 				</div>
-					// 			</div>
-					// 		</div>
-					// 	< ?
-					// }
+					if ( is_numeric( $download['downloads_remaining'] ) ) {
+						echo apply_filters(
+							'woocommerce_available_download_count',
+							'<span class="count">' . 
+								sprintf( _n( 
+									'%s download remaining',
+									'%s downloads remaining',
+									$download['downloads_remaining'],
+									'woocommerce'
+								), 
+								$download['downloads_remaining'] 
+							) . 
+							'</span> ',
+							$download
+						);
+					}
+
+					echo apply_filters(
+						'woocommerce_available_download_link', 
+						'<a class="add_to_cart_button download_button download-link-product-page" href="' . 
+						esc_url( $download['download_url'] ) . 
+						'">Download: ' . 
+							$download['download_name'] . 
+						'</a>', 
+						$download 
+					) ;
+
+					do_action( 'woocommerce_available_download_end', $download );
+
+				}
+			}
 
 			do_action( 'woocommerce_after_available_downloads' );
 
-			}
-
 		}
+
+	}
 
 }
 
