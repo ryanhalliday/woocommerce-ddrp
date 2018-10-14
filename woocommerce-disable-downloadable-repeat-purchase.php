@@ -4,7 +4,7 @@ Plugin Name: WooCommerce Disable Downloadable Repeat Purchase
 Description: Disable the ability for logged in users to purchase items they already own that are downloadable. Links are provided on the product page for ease of re-download. It does not apply to products the customer has been refunded for, or has their download expired. It checks if the product has been purchased and is available to download on their account.
 Author: Square One Media, Ryan Halliday
 Author URI: https://www.squareonemedia.co.uk
-Version: 1.1
+Version: 1.2
 Text Domain: woocommerce-disable-downloadable-repeat-purchase
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -33,7 +33,7 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 	}
 
 	// Get the ID for the current product
-	$product_id = $product->id; 
+	$product_id = $product->get_id(); 
  
 	// return false if the customer has bought the product and is currently available for download
 	if ( wc_customer_bought_product( wp_get_current_user()->user_email, get_current_user_id(), $product_id ) && ($product->downloadable == 'yes') ) {
@@ -48,7 +48,7 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 		if ( $downloads = $customers_downloadable_products ) {
 
 				foreach ( $downloads as $download ) :
-					if ($download['product_id'] == $product->id) {
+					if ($download['product_id'] == $product->get_id()) {
 						$purchasable = false;
 					}
 				endforeach;
@@ -68,7 +68,7 @@ function som_repeat_purchase_buttons() {
 	$once = 0;
 	$end = false;
 
-	if ( wc_customer_bought_product( get_current_user()->user_email, get_current_user_id(), $product->id ) && ($product->downloadable == 'yes') ) {
+	if ( wc_customer_bought_product( get_current_user()->user_email, get_current_user_id(), $product->get_id() ) && ($product->downloadable == 'yes') ) {
 
 		if ($customers_downloadable_products === 0){
 			$customer = WC()->customer;
@@ -86,7 +86,7 @@ function som_repeat_purchase_buttons() {
 
 			foreach ( $downloads as $download ) {
 
-				if ($download['product_id'] == $product->id) {
+				if ($download['product_id'] == $product->get_id()) {
 
 					if (in_array($download['download_name'], $alreadyDisplayed)){
 						continue;
