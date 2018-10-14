@@ -130,9 +130,9 @@ function som_repeat_purchase_buttons() {
 
 			do_action( 'woocommerce_after_available_downloads' );
 
-		}
+			}
 
-	}
+		}
 
 }
 
@@ -148,7 +148,7 @@ function som_repeat_purchase_disabled_message(){
 				</p>
 			</div>
 		</div>
-		<?
+		<?php
 	}
 }
 
