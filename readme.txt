@@ -17,7 +17,7 @@ If the user has had a refund for the item, or if they have used up all of their 
 
 On any page that displays the products other than the single product page, the button shows as "Read More", as though the product is not available.
 
-
+Also exposes a global `$customers_downloadable_products` for usage elsewhere on your website such as product grid download buttons. Check the code for usage.
 
 == Installation ==
 
