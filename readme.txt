@@ -41,6 +41,13 @@ It uses div tags, including <div class="woocommerce-info wc-nonpurchasable-messa
 
 
 == Changelog ==
+= 1.2 =
+* QOL Improvements
+* YITH bundle support
+* Error handling
+* Removed debug statements
+* Template changes
+* Some other changes...
 = 1.1 =
 * Improved performance by saving query results
 = 1.0 = 
