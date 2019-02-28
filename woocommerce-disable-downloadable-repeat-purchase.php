@@ -68,7 +68,7 @@ function som_repeat_purchase_buttons() {
 	$once = 0;
 	$end = false;
 
-	if ( wc_customer_bought_product( get_current_user()->user_email, get_current_user_id(), $product->get_id() ) && ($product->downloadable == 'yes') ) {
+	if ( wc_customer_bought_product( wp_get_current_user()->user_email, get_current_user_id(), $product->get_id() ) && ($product->downloadable == 'yes') ) {
 
 		if ($customers_downloadable_products === 0){
 			$customer = WC()->customer;
