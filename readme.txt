@@ -1,9 +1,9 @@
 === Disable Downloadable Repeat Purchase - WooCommerce ===
 Contributors: squareonemedia, rwebster85, ryanhalliday
-Author URI: https://www.squareonemedia.co.uk
-Plugin URL: https://wordpress.org/plugins/disable-downloadable-repeat-purchase-woocommerce/
+Author URI: https://github.com/ryanhalliday/woocommerce-ddrp
+Plugin URL: https://github.com/ryanhalliday/woocommerce-ddrp
 Requires at Least: 3.7
-Tested Up To: 4.5.2
+Tested Up To: 6.4.3
 Tags: woocommerce, downloads, downloadable, repeat purchase, wordpress, wordpress.org
 
 For WooCommerce. Disable the ability for logged in users to purchase items they already own that are downloadable.
@@ -17,7 +17,7 @@ If the user has had a refund for the item, or if they have used up all of their 
 
 On any page that displays the products other than the single product page, the button shows as "Read More", as though the product is not available.
 
-Also exposes a global `$customers_downloadable_products` for usage elsewhere on your website such as product grid download buttons. Check the code for usage.
+Also exposes a global `$som_user_dl_permissions` for usage elsewhere on your website such as product grid download buttons. Check the code for usage.
 
 == Installation ==
 
@@ -41,6 +41,14 @@ It uses div tags, including <div class="woocommerce-info wc-nonpurchasable-messa
 
 
 == Changelog ==
+
+= 2.0 =
+* Way improved performance
+* Tidied up code and removed some jank
+
+= 1.3 =
+* Minor fixes
+
 = 1.2 =
 * QOL Improvements
 * YITH bundle support
@@ -48,8 +56,10 @@ It uses div tags, including <div class="woocommerce-info wc-nonpurchasable-messa
 * Removed debug statements
 * Template changes
 * Some other changes...
+
 = 1.1 =
 * Improved performance by saving query results
+
 = 1.0 = 
 * Initial release
 
