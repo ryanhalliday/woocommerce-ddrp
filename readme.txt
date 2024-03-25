@@ -42,6 +42,9 @@ It uses div tags, including <div class="woocommerce-info wc-nonpurchasable-messa
 
 == Changelog ==
 
+= 2.0.1 =
+* Fix doing it wrong on prop access
+
 = 2.0 =
 * Way improved performance
 * Tidied up code and removed some jank
