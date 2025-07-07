@@ -49,7 +49,16 @@ function som_get_download_url($product_id, $download_id, $product_filtered_dl_pe
 	);
 }
 
+$som_ddrp_purchasable_cache = [];
+
 function som_disable_repeat_purchase( $purchasable, $product ) {
+	global $som_ddrp_purchasable_cache;
+
+	// These calls aren't expensive, but we can cache the result to avoid unnecessary calls
+	if (isset($som_ddrp_purchasable_cache[$product->get_id()])){
+		return $som_ddrp_purchasable_cache[$product->get_id()];
+	}
+
 	if ($product->get_type() == "yith_bundle" || is_a($product, 'YITH_WC_Bundled_Item')){
 		//Handle bundle logic another day
 		$bundled_items = $product->get_bundled_items();
@@ -61,8 +70,10 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 		}
 
 		if ($purchasable_count == 0 && $product->get_price() !== '' ){
+			$som_ddrp_purchasable_cache[$product->get_id()] = false;
 			return false;
 		} else {
+			$som_ddrp_purchasable_cache[$product->get_id()] = true;
 			return true;
 		}
 	}
@@ -75,9 +86,11 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 		$download_permission = array_filter($som_user_dl_permissions, function($permission) use ($product_id){
 			return $permission->product_id == $product_id;
 		});
-		return empty($download_permission) ? true : false;
+		$som_ddrp_purchasable_cache[$product->get_id()] = empty($download_permission) ? true : false;
+		return $som_ddrp_purchasable_cache[$product->get_id()];
 	}
 
+	$som_ddrp_purchasable_cache[$product->get_id()] = $purchasable; // no-change
 	return $purchasable;
 }
 add_filter( 'woocommerce_is_purchasable', 'som_disable_repeat_purchase', 10, 2 );
@@ -130,13 +143,11 @@ function som_download_buttons() {
 				$download 
 			) ;
 
+
 			do_action( 'woocommerce_available_download_end', $download );
 		}
 
 		do_action( 'woocommerce_after_available_downloads' );
-
-		$displayedDownloads = true;
-
 	}
 
 }
