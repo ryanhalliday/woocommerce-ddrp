@@ -157,7 +157,7 @@ function som_repeat_purchase_disabled_message(){
 
 	if ( wc_customer_bought_product( wp_get_current_user()->user_email, get_current_user_id(), $product->get_id() ) && ($product->get_downloadable() == 'yes') ) {
 		?>
-		<div class="woocommerce">
+		<div class="woocommerce wc-nonpurchasable-message-wrapper">
 			<div class="woocommerce-info wc-nonpurchasable-message">
 				<p>
 					<strong>You've already purchased this product.</strong><br>
