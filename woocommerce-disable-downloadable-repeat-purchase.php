@@ -4,7 +4,7 @@ Plugin Name: WooCommerce Disable Downloadable Repeat Purchase
 Description: Disable the ability for logged in users to purchase items they already own that are downloadable. Links are provided on the product page for ease of re-download. It does not apply to products the customer has been refunded for, or has their download expired. It checks if the product has been purchased and is available to download on their account.
 Author: Square One Media, Ryan Halliday
 Author URI: https://github.com/ryanhalliday/woocommerce-ddrp
-Version: 2.0.1
+Version: 2.0.2
 Text Domain: woocommerce-disable-downloadable-repeat-purchase
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -54,13 +54,22 @@ $som_ddrp_purchasable_cache = [];
 function som_disable_repeat_purchase( $purchasable, $product ) {
 	global $som_ddrp_purchasable_cache;
 
+	// The result depends on the incoming value, so it is part of the cache key.
+	// Otherwise a cached true could be returned for a product something else has denied.
+	$cache_key = $product->get_id() . ':' . ($purchasable ? '1' : '0');
+
 	// These calls aren't expensive, but we can cache the result to avoid unnecessary calls
-	if (isset($som_ddrp_purchasable_cache[$product->get_id()])){
-		return $som_ddrp_purchasable_cache[$product->get_id()];
+	if (isset($som_ddrp_purchasable_cache[$cache_key])){
+		return $som_ddrp_purchasable_cache[$cache_key];
 	}
 
 	if ($product->get_type() == "yith_bundle" || is_a($product, 'YITH_WC_Bundled_Item')){
-		//Handle bundle logic another day
+		// The bundle's own checks, as in YITH's WC_Product_Yith_Bundle::is_purchasable()
+		if ( ! $product->exists() || $product->get_price() === '' || ( $product->get_status() !== 'publish' && ! current_user_can( 'edit_post', $product->get_id() ) ) ) {
+			$som_ddrp_purchasable_cache[$cache_key] = false;
+			return false;
+		}
+
 		$bundled_items = $product->get_bundled_items();
 		$purchasable_count = 0;
 		foreach ( $bundled_items as $bundled_item ) {
@@ -69,13 +78,23 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 			}
 		}
 
-		if ($purchasable_count == 0 && $product->get_price() !== '' ){
-			$som_ddrp_purchasable_cache[$product->get_id()] = false;
-			return false;
+		if ($purchasable_count == 0){
+			$som_ddrp_purchasable_cache[$cache_key] = false;
+		} else if ($purchasable_count < count($bundled_items)) {
+			// YITH denies the bundle if any item isn't purchasable, which includes items the
+			// customer already owns. Allow it while at least one item can still be bought.
+			$som_ddrp_purchasable_cache[$cache_key] = true;
 		} else {
-			$som_ddrp_purchasable_cache[$product->get_id()] = true;
-			return true;
+			// Every item is purchasable, so any denial came from something else. Keep it.
+			$som_ddrp_purchasable_cache[$cache_key] = $purchasable;
 		}
+		return $som_ddrp_purchasable_cache[$cache_key];
+	}
+
+	// Never make a product purchasable that something else has already denied
+	if ( ! $purchasable ){
+		$som_ddrp_purchasable_cache[$cache_key] = false;
+		return false;
 	}
 
 	$product_id = $product->get_id(); 
@@ -86,11 +105,11 @@ function som_disable_repeat_purchase( $purchasable, $product ) {
 		$download_permission = array_filter($som_user_dl_permissions, function($permission) use ($product_id){
 			return $permission->product_id == $product_id;
 		});
-		$som_ddrp_purchasable_cache[$product->get_id()] = empty($download_permission) ? true : false;
-		return $som_ddrp_purchasable_cache[$product->get_id()];
+		$som_ddrp_purchasable_cache[$cache_key] = empty($download_permission) ? true : false;
+		return $som_ddrp_purchasable_cache[$cache_key];
 	}
 
-	$som_ddrp_purchasable_cache[$product->get_id()] = $purchasable; // no-change
+	$som_ddrp_purchasable_cache[$cache_key] = $purchasable; // no-change
 	return $purchasable;
 }
 add_filter( 'woocommerce_is_purchasable', 'som_disable_repeat_purchase', 10, 2 );

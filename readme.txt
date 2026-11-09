@@ -42,6 +42,10 @@ It uses div tags, including <div class="woocommerce-info wc-nonpurchasable-messa
 
 == Changelog ==
 
+= 2.0.2 =
+* Never make a product purchasable when something else has already denied it
+* YITH bundles must still pass their own price and status checks
+
 = 2.0.1 =
 * Fix doing it wrong on prop access
 
